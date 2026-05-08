@@ -12,6 +12,7 @@ Recuerda identificar en tus comentarios:
     # PASO RECURSIVO
 """
 
+
 import time
 import random
 
@@ -37,14 +38,12 @@ def particiona(arr: list, lo: int, hi: int) -> int:
     i = lo - 1
 
     for j in range(lo, hi):
-        # TODO: si arr[j] <= pivot:
-        #           incrementa i
-        #           intercambia arr[i] con arr[j]
-        pass
+        if arr[j] <= pivot:
+            i += 1
+            arr[i], arr[j] = arr[j], arr[i]
 
-    # TODO: coloca el pivote en su posición definitiva
-    #       intercambia arr[i + 1] con arr[hi]
-    # TODO: devuelve i + 1
+    arr[i + 1], arr[hi] = arr[hi], arr[i + 1]
+    return i + 1
 
 
 def particiona_aleatoria(arr: list, lo: int, hi: int) -> int:
@@ -52,9 +51,9 @@ def particiona_aleatoria(arr: list, lo: int, hi: int) -> int:
     Igual que particiona, pero elige el pivote al azar dentro de arr[lo..hi].
     Esto evita el peor caso O(n²) en arreglos ya ordenados.
     """
-    # TODO: elige un índice aleatorio entre lo y hi (inclusive)
-    # TODO: intercambia arr[idx] con arr[hi]
-    # TODO: llama a particiona(arr, lo, hi) y devuelve su resultado
+    idx = random.randint(lo, hi)
+    arr[idx], arr[hi] = arr[hi], arr[idx]
+    return particiona(arr, lo, hi)
 
 
 # ---------------------------------------------------------------------------
@@ -72,7 +71,8 @@ def quicksort(arr: list, lo: int = 0, hi: int = None) -> None:
         hi = len(arr) - 1
 
     # PASO BASE
-    # TODO: si lo >= hi, el subarreglo tiene 0 o 1 elemento → ya está ordenado
+    if lo >= hi:
+        return  # El subarreglo tiene 0 o 1 elemento → ya está ordenado
 
     # HIPÓTESIS INDUCTIVA:
     # Supongo que quicksort(arr, lo, p-1) ordena correctamente arr[lo..p-1] y
@@ -81,9 +81,9 @@ def quicksort(arr: list, lo: int = 0, hi: int = None) -> None:
     # por lo que el arreglo completo arr[lo..hi] queda ordenado.
 
     # PASO RECURSIVO
-    # TODO: 1. p = particiona(arr, lo, hi)
-    # TODO: 2. quicksort(arr, lo, p - 1)
-    # TODO: 3. quicksort(arr, p + 1, hi)
+    p = particiona(arr, lo, hi)        # 1. Particionar
+    quicksort(arr, lo, p - 1)          # 2. Ordenar subarreglo izquierdo
+    quicksort(arr, p + 1, hi)          # 3. Ordenar subarreglo derecho
 
 
 def quicksort_aleatorio(arr: list, lo: int = 0, hi: int = None) -> None:
@@ -93,7 +93,19 @@ def quicksort_aleatorio(arr: list, lo: int = 0, hi: int = None) -> None:
     if hi is None:
         hi = len(arr) - 1
 
-    # TODO: mismo esquema que quicksort, pero llamando a particiona_aleatoria
+    # PASO BASE
+    if lo >= hi:
+        return  # El subarreglo tiene 0 o 1 elemento → ya está ordenado
+
+    # HIPÓTESIS INDUCTIVA:
+    # Misma hipótesis que en quicksort: supongo que las llamadas recursivas
+    # ordenan correctamente los subarreglos izquierdo y derecho, y el pivote
+    # ya está en su posición final tras la partición aleatoria.
+
+    # PASO RECURSIVO
+    p = particiona_aleatoria(arr, lo, hi)  # Partición con pivote aleatorio
+    quicksort_aleatorio(arr, lo, p - 1)
+    quicksort_aleatorio(arr, p + 1, hi)
 
 
 # ---------------------------------------------------------------------------
